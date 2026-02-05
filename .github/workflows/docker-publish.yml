@@ -5,8 +5,7 @@ jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Ligar Tunnel
+      - name: Rodar Playit
         env:
-          CHAVE: ${{ secrets.PLAYIT_SECRET }}
-        run: |
-          docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16
+          SECRET_KEY: ${{ secrets.PLAYIT_SECRET }}
+        run: docker run --rm -e SECRET_KEY="$SECRET_KEY" ghcr.io/playit-cloud/playit-agent:0.16
