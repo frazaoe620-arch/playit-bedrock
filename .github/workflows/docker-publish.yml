@@ -5,12 +5,12 @@ jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Rodar Minecraft e Tunnel
+      - name: Ligar Tudo
         env:
           CHAVE: ${{ secrets.PLAYIT_SECRET }}
         run: |
-          # 1. Baixa e liga o servidor de Minecraft em segundo plano
+          # 1. Cria o servidor de Minecraft Bedrock (porta 19132 padrão)
           docker run -d -it -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
           
-          # 2. Liga o túnel do Playit
+          # 2. Conecta o Playit ao servidor que acabamos de criar
           docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
