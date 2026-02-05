@@ -5,12 +5,12 @@ jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Ligar Tudo
+      - name: Ligar Servidor e Tunnel Juntos
         env:
           CHAVE: ${{ secrets.PLAYIT_SECRET }}
         run: |
-          # 1. Cria o servidor de Minecraft Bedrock (porta 19132 padrão)
-          docker run -d -it -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
+          # Este comando roda o Minecraft e o Playit grudados um no outro
+          docker run --rm -d --name mc-server -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
           
-          # 2. Conecta o Playit ao servidor que acabamos de criar
-          docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
+          # O Playit agora vai usar a rede do computador do GitHub diretamente
+          docker run --rm --network host -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
