@@ -5,12 +5,16 @@ jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Ligar Servidor e Tunnel Juntos
+      - name: Ligar Tudo
         env:
           CHAVE: ${{ secrets.PLAYIT_SECRET }}
         run: |
-          # Este comando roda o Minecraft e o Playit grudados um no outro
-          docker run --rm -d --name mc-server -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
+          # 1. Inicia o Minecraft Bedrock travando a porta 19132
+          docker run -d --name mc_server -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
           
-          # O Playit agora vai usar a rede do computador do GitHub diretamente
-          docker run --rm --network host -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
+          # 2. Espera 30 segundos para o servidor carregar o mundo antes de ligar o túnel
+          echo "Aguardando o Minecraft ligar..."
+          sleep 30
+          
+          # 3. Inicia o Playit forçando a conexão com o IP interno do Docker
+          docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
