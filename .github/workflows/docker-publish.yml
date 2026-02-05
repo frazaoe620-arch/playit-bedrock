@@ -5,7 +5,8 @@ jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Rodar Playit
+      - name: Rodar Playit IPv4
         env:
-          SECRET_KEY: ${{ secrets.PLAYIT_SECRET }}
-        run: docker run --rm -e SECRET_KEY="$SECRET_KEY" ghcr.io/playit-cloud/playit-agent:0.16
+          CHAVE: ${{ secrets.PLAYIT_SECRET }}
+        run: |
+          docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
