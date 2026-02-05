@@ -5,8 +5,10 @@ jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Rodar Playit IPv4
+      - name: Rodar Servidor e Tunnel
         env:
           CHAVE: ${{ secrets.PLAYIT_SECRET }}
         run: |
+          # Comando para rodar o servidor de Bedrock e o Playit juntos
+          docker run --rm -d -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
           docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
