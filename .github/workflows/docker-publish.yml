@@ -2,26 +2,13 @@ name: Docker
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
-  schedule:
-    - cron: '0 0 * * SUN'
 
 jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Start Playit and Server
+      - name: Start Playit Agent
         env:
-          PLAYIT_SECRET: ${{ secrets.PLAYIT_SECRET }}
+          MINHA_CHAVE: ${{ secrets.PLAYIT_SECRET }}
         run: |
-          if [ -z "$PLAYIT_SECRET" ]; then
-            echo "ERRO: Você não configurou a PLAYIT_SECRET nos Secrets do GitHub!"
-            exit 1
-          fi
-          # Comando para rodar o docker do repositório
-          docker build . --file Dockerfile --tag minecraft-server
-          docker run -e PLAYIT_SECRET=$PLAYIT_SECRET minecraft-server
+          docker run --rm -e SECRET_KEY="$MINHA_CHAVE" ghcr.io/playit-cloud/playit-agent:0.16
