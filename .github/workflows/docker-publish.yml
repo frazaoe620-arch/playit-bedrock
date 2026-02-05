@@ -1,20 +1,33 @@
-name: Docker
+name: Bedrock + Playit (TESTE)
+
 on:
   workflow_dispatch:
+
 jobs:
   run-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Ligar Tudo
+      - name: Rodar Bedrock + Playit
         env:
           CHAVE: ${{ secrets.PLAYIT_SECRET }}
         run: |
-          # 1. Inicia o Minecraft Bedrock travando a porta 19132
-          docker run -d --name mc_server -e EULA=TRUE -p 19132:19132/udp itzg/minecraft-bedrock-server
-          
-          # 2. Espera 30 segundos para o servidor carregar o mundo antes de ligar o túnel
-          echo "Aguardando o Minecraft ligar..."
-          sleep 30
-          
-          # 3. Inicia o Playit forçando a conexão com o IP interno do Docker
-          docker run --rm -e SECRET_KEY="$CHAVE" ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
+          echo "Iniciando servidor..."
+
+          docker run -d \
+            --name bedrock \
+            -e EULA=TRUE \
+            -p 19132:19132/udp \
+            -v bedrock_data:/data \
+            itzg/minecraft-bedrock-server
+
+          echo "Iniciando Playit..."
+
+          docker run -d \
+            --name playit \
+            -e SECRET_KEY="$CHAVE" \
+            ghcr.io/playit-cloud/playit-agent:0.16 --force-ipv4
+
+          echo "Servidor rodando (vai cair quando Actions matar o job)..."
+
+          # Mantém o workflow vivo por 6 horas (limite máximo)
+          sleep 21600
